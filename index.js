@@ -3,9 +3,12 @@ var exphbs = require('express-handlebars');//to render templates
 const bodyParser = require('body-parser');//require body parser for htm functionality
 const SettingsBill = require('./settings-bill')//require factory function
 
+var moment = require('moment'); // require
+moment().format();
+
 let app = express();
 let settingsBill = SettingsBill();
-
+const time = settingsBill.actions()
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
@@ -26,7 +29,7 @@ app.get('/', function (req, res) {
     res.render('home', {
         settings: settingsBill.getSettings(),
         totals: settingsBill.totals(),
-        color : settingsBill.color()
+        color: settingsBill.color()
     });
 });
 
@@ -49,17 +52,25 @@ app.post('/action', function (req, res) {
 });
 
 app.get('/actions', function (req, res) {
-    res.render("actions", { actions: settingsBill.actions() })
+    for (const key of time) {
+        key.ago = moment(key.timestamp).fromNow()
+    }
+    res.render("actions", { actions: time })
 });
 
 app.get('/actions/:actionType', function (req, res) {
+
     const actionType = req.params.actionType
-    res.render("actions", { actions: settingsBill.actionsFor(actionType) })
+    const actionForTime = settingsBill.actionsFor(actionType)
+    for (const key of actionForTime) {
+        key.ago = moment(key.timestamp).fromNow()
+    }
+    res.render("actions", { actions: actionForTime })
 
 });
 
 const PORT = process.env.PORT || 3009;
 
 app.listen(PORT, function () {
-    console.log('App starting on port'+  PORT);
+    console.log('App starting on port' + PORT);
 });
