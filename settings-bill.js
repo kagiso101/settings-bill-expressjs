@@ -1,19 +1,20 @@
 module.exports = function SettingsBill() {
 
-    let smsCost;
-    let callCost;
+    let smsCost = 0;
+    let callCost = 0;
     let warningLevel;
     let criticalLevel;
 
     let actionList = [];
 
     function setSettings(settings) {
-        smsCost = Number(settings.smsCost);
-        callCost = Number(settings.callCost);
-        warningLevel = settings.warningLevel;
-        criticalLevel = settings.criticalLevel;
+        if (!settings == "") {
+            smsCost = Number(settings.smsCost);
+            callCost = Number(settings.callCost);
+            warningLevel = settings.warningLevel;
+            criticalLevel = settings.criticalLevel;
+        }
     }
-
     function getSettings() {
         return {
             smsCost,
@@ -90,12 +91,12 @@ module.exports = function SettingsBill() {
     }
 
     function totals() {
-        let smsTotal = getTotal('sms').toFixed(2)
-        let callTotal = getTotal('call').toFixed(2)
+        let smsTotal = Number(getTotal('sms')).toFixed(2)
+        let callTotal = Number(getTotal('call')).toFixed(2)
         return {
             smsTotal,
             callTotal,
-            grandTotal: grandTotal().toFixed(2)
+            grandTotal: Number(grandTotal()).toFixed(2)
         }
     }
 
